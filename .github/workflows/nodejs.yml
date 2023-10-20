@@ -77,5 +77,11 @@ jobs:
         aws configure set aws_secret_access_key ${{secrets.AWS_SECRET_ACCESS_KEY }}
         aws configure set default.region us-west-2 # Set your desired region
         
-      
+  Configure_ECS:
+   needs: [Configure_AWS]
+   runs-on: self-hosted
+   steps:
+    - name: Create ECS Cluster
+      run: |
+        aws ecs create-cluster --cluster-name Chenna2    
       
