@@ -84,4 +84,15 @@ jobs:
     - name: Create ECS Cluster
       run: |
         aws ecs create-cluster --cluster-name Chenna2    
+    - name: Verify_Secret_in_AWS_Secret_Manager
+      run: |
+        existing_val=$(aws secretsmanager describe-secret --secret-id student02 --query 'Name' --output text 2>/dev/null || echo "")
+        echo "jfrog_exists=$existing_val">> $GITHUB_ENV
+    - name: Create Secret in AWS_Secret_Manager
+      run: |
+        if [ "${{ env.jfrog_exists }}" == "student02" ]; then
+            echo "Secret already exists."
+        else
+            echo "Secret does not exist. Creating..."
+        aws secretsmanager create-secret --name student02 --description "Username and Password of MyJfrog" --secret-string "${{ secrets.JFROG_CRED }}"    
       
