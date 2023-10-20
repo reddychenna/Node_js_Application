@@ -111,5 +111,28 @@ jobs:
         service_name="my-node-service-student02"
         existing_service=$(aws ecs describe-services --cluster my-node-student02 --services $service_name --query 'services[0].serviceName' --output text)
         echo "service_exists=$existing_service" >> $GITHUB_ENV
+    - name: Create or update ECS service
+      run: |
+          if [[ "${{ env.service_exists }}" == "my-node-service-student02" ]]; then
+            echo "Service already exists. Performing update..."
+            latest_revision=$(aws ecs describe-task-definition --task-definition node-app-deploy-student02 --query 'taskDefinition.revision')
+            echo "Latest revision: $latest_revision"
+            aws ecs update-service --cluster my-node-student02 --service my-node-service-student02 --desired-count 1 --task-definition node-app-deploy-student02:$latest_revision
+          else
+            echo "Service does not exist. Creating a new service..."
+            latest_revision=$(aws ecs describe-task-definition --task-definition node-app-deploy-studentXX --query 'taskDefinition.revision')
+            echo "Latest revision: $latest_revision"
+            aws ecs create-service --cluster my-node-student02 --service-name my-node-service-student02 --task-definition node-app-deploy-student02:$latest_revision --desired-count 1 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[subnet-0ab5a9b7768b9b147],securityGroups=[sg-014331ad55ed36e96],assignPublicIp=ENABLED}"
+           fi        
+        
+    - name: Featch_Public_IP_Address
+      run: |
+        task_id=$(aws ecs list-tasks --cluster my-node-student02 --family node-app-deploy-student02 --query 'taskArns[0]' --output text | awk -F / '{print $NF}')
+        task_arn=$(aws ecs describe-tasks --cluster my-node-student02 --tasks $task_id --query 'tasks[0].taskArn' --output text)
+        eni_number=$(aws ecs describe-tasks --cluster my-node-student02 --tasks $task_arn --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
+        eni_id=$eni_number
 
+        public_ip=$(aws ec2 describe-network-interfaces --network-interface-ids
+        $eni_id --query 'NetworkInterfaces[0].Association.PublicIp' --output text)
+        echo $public_ip        
         
