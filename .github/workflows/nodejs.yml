@@ -83,7 +83,7 @@ jobs:
    steps:
     - name: Create ECS Cluster
       run: |
-        aws ecs create-cluster --cluster-name Chenna2    
+        aws ecs create-cluster --cluster-name my-node-student02   
     - name: Verify_Secret_in_AWS_Secret_Manager
       run: |
         existing_val=$(aws secretsmanager describe-secret --secret-id student02 --query 'Name' --output text 2>/dev/null || echo "")
