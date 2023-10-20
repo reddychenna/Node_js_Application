@@ -6,7 +6,7 @@ WORKDIR /home/ubuntu/app
 
 #Copy code into the container
 
-COPY ..
+COPY . .
 
 #install dependencies
 
