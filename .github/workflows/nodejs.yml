@@ -14,7 +14,7 @@ jobs:
         sudo apt-get install -y nodejs
         node --version
         npm --version
-
+ 
   Installing_pm2_and_deploy_application:
    needs: [build]
    runs-on: self-hosted
