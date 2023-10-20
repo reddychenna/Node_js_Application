@@ -128,7 +128,9 @@ jobs:
     - name: Featch_Public_IP_Address
       run: |
         task_id=$(aws ecs list-tasks --cluster my-node-student02 --family node-app-deploy-student02 --query 'taskArns[0]' --output text | awk -F / '{print $NF}')
+        echo $task_id
         task_arn=$(aws ecs describe-tasks --cluster my-node-student02 --tasks $task_id --query 'tasks[0].taskArn' --output text)
+        echo $task_arn
         eni_number=$(aws ecs describe-tasks --cluster my-node-student02 --tasks $task_arn --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' --output text)
         eni_id=$eni_number
 
