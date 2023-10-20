@@ -96,3 +96,20 @@ jobs:
             echo "Secret does not exist. Creating..."
         aws secretsmanager create-secret --name student02 --description "Username and Password of MyJfrog" --secret-string "${{ secrets.JFROG_CRED }}"    
         fi
+    
+    - name: Register Task_Definition
+      run: |
+        aws ecs register-task-definition --cli-input-json file://.github/workflows/task-definition.json
+        aws ecs list-task-definitions
+    - name: Fetch Revision number of Task_Definition
+      run: |
+        latest_revision=$(aws ecs describe-task-definition --task-definition node-app-deploy-student02 --query 'taskDefinition.revision')
+        echo "Latest revision: $latest_revision"
+    - name: Check if ECS service exists
+      id: check-service
+      run: |
+        service_name="my-node-service-student02"
+        existing_service=$(aws ecs describe-services --cluster my-node-student02 --services $service_name --query 'services[0].serviceName' --output text)
+        echo "service_exists=$existing_service" >> $GITHUB_ENV
+
+        
