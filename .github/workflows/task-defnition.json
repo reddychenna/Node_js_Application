@@ -1,0 +1,43 @@
+{
+"containerDefinitions": [
+{
+"name": "node-app",
+"image": "mskcc.jfrog.io/artifactory/sandbox-docker-local/my-node-app:latest",
+"repositoryCredentials": {
+"credentialsParameter": "arn:aws:secretsmanager:us-west-2:340704870584:secret:student02-CHg5Cs"
+},
+"cpu": 0,
+"portMappings": [
+{
+"containerPort": 3000,
+"hostPort": 3000,
+"protocol": "tcp"
+}
+],
+"essential": true,
+"environment": [],
+"environmentFiles": [],
+"mountPoints": [],
+"volumesFrom": [],
+"ulimits": []
+}
+],
+
+"family": "node-app-deploy-student02",
+"executionRoleArn":
+"arn:aws:iam::340704870584:role/ecsTaskExecutionRole",
+"networkMode": "awsvpc",
+"volumes": [],
+"placementConstraints": [],
+"requiresCompatibilities": [
+"FARGATE"
+],
+"cpu": "1024",
+"memory": "2048",
+"tags": [
+{
+"key": "Name",
+"value": "my-node-app"
+}
+]
+}
